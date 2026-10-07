@@ -498,7 +498,7 @@ struct FreefireESPHomeSection: View {
                 Text("AIMKILL")
                     .font(.system(size: 12, weight: .heavy))
                     .foregroundStyle(.white)
-                    .kerning(0.5)
+                    .tracking(0.5)
                 Spacer()
             }
             .padding(.horizontal, 14)
