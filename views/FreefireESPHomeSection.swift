@@ -37,6 +37,7 @@ struct FreefireESPHomeSection: View {
             } else {
                 innoSectionHeader(title: "MISC SETTINGS", subtitle: "Các cài đặt bổ sung khác")
                     .padding(.horizontal, 4).padding(.top, 4)
+                aimKillCard
                 ServerTabView(store: store, sections: uiConfig?.misc ?? [])
             }
         }
@@ -446,12 +447,8 @@ struct FreefireESPHomeSection: View {
     private var checkButton: some View {
         let green = Color(red: 0.10, green: 0.88, blue: 0.52)
         let patchInstalled = store.selectedVariant == .freefire ? store.isPatchInstalled : store.isPatchInstalledMAX
-        let anyFeatureOn = store.enableESP || store.silentAim || store.noRecoil || store.aimFov
-            || store.speedRunning || store.fastParachute || store.fakeDamage || store.wideCamera
-            || store.fastHeal || store.fastFire || store.fastSwap || store.highJump
-            || store.fastRevive || store.skillCD || store.ghost
         return Button {
-            checkSheetIsOn = patchInstalled && anyFeatureOn
+            checkSheetIsOn = patchInstalled
             checkDiagText = store.checkESPStatus()
             showCheckSheet = true
         } label: {
@@ -823,6 +820,95 @@ private struct ESPResultSheet: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
+    }
+
+    // MARK: - AimKill card (hardcoded, no server needed)
+    private var aimKillCard: some View {
+        let isOn   = store.aimKill
+        let accent = Color(red: 1.0, green: 0.25, blue: 0.35)
+        return VStack(spacing: 0) {
+            // Header
+            HStack(spacing: 8) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(accent.opacity(0.18))
+                        .frame(width: 30, height: 30)
+                    Image(systemName: "scope")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(accent)
+                }
+                Text("AIMKILL")
+                    .font(.system(size: 12, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .kerning(0.5)
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 13)
+            .padding(.bottom, 10)
+
+            Rectangle()
+                .fill(Color.white.opacity(0.08))
+                .frame(height: 0.5)
+
+            // Toggle row
+            HStack(spacing: 13) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(isOn ? accent.opacity(0.25) : Color.white.opacity(0.07))
+                        .frame(width: 46, height: 46)
+                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(isOn ? accent.opacity(0.40) : Color.white.opacity(0.10), lineWidth: 1))
+                    Image(systemName: "bolt.fill")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(isOn ? accent : Color(white: 0.45))
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("AimKill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white)
+                    Text("Gửi TakeDamage đến địch gần nhất (msg 106)")
+                        .font(.system(size: 11, weight: .regular))
+                        .foregroundStyle(Color(white: 0.50))
+                }
+                Spacer()
+                // Toggle switch
+                ZStack {
+                    Capsule()
+                        .fill(isOn ? accent : Color(white: 0.18))
+                        .overlay(Capsule()
+                            .strokeBorder(isOn ? accent.opacity(0.25) : Color.white.opacity(0.10), lineWidth: 1))
+                    HStack(spacing: 0) {
+                        if isOn { Spacer(minLength: 0) }
+                        ZStack {
+                            Circle()
+                                .fill(.white)
+                                .frame(width: 24, height: 24)
+                                .shadow(color: .black.opacity(0.20), radius: 2, y: 1)
+                            Image(systemName: isOn ? "checkmark" : "minus")
+                                .font(.system(size: 10, weight: .black))
+                                .foregroundStyle(isOn ? accent : Color(white: 0.42))
+                        }
+                        .padding(3)
+                        if !isOn { Spacer(minLength: 0) }
+                    }
+                }
+                .frame(width: 56, height: 30)
+                .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isOn)
+                .onTapGesture {
+                    store.aimKill.toggle()
+                    store.flushStatePublic()
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+
+            Spacer(minLength: 8)
+        }
+        .background(AppTheme.techCardFill)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .strokeBorder(accent.opacity(0.18), lineWidth: 1))
     }
 }
 
