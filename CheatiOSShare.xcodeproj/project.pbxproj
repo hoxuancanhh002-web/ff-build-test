@@ -123,6 +123,7 @@
 		MT0152 /* MakeToolsSim.swift in Sources */ = {isa = PBXBuildFile; fileRef = MT0151 /* MakeToolsSim.swift */; };
 		MT0162 /* MakeToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MT0161 /* MakeToolsView.swift */; };
 		MK0003 /* make-file.html in Resources */ = {isa = PBXBuildFile; fileRef = MK0004 /* make-file.html */; };
+		LCFG001 /* localConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = LCFG002 /* localConfig.json */; };
 		FF0001 /* FreefireESPStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0101 /* FreefireESPStore.swift */; };
 		FF0002 /* FreefireESPHomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0102 /* FreefireESPHomeSection.swift */; };
 		AUC001 /* AppUIConfigModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AUC101 /* AppUIConfigModels.swift */; };
@@ -157,6 +158,7 @@
 		MT0151 /* MakeToolsSim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeToolsSim.swift; sourceTree = "<group>"; };
 		MT0161 /* MakeToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeToolsView.swift; sourceTree = "<group>"; };
 		MK0004 /* make-file.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "make-file.html"; sourceTree = "<group>"; };
+		LCFG002 /* localConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "localConfig.json"; sourceTree = "<group>"; };
 		CA10CAFEDEADBEEF0000F00A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		CA10CAFEDEADBEEF0000F00B /* ContainerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStore.swift; sourceTree = "<group>"; };
 		CA10CAFEDEADBEEF0000F00D /* NetworkSecurityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSecurityMonitor.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				E05002 /* Localizable.strings */,
 				MK0004 /* make-file.html */,
 				PATCH002 /* Assembly-CSharp-patch.bytes */,
+				LCFG002 /* localConfig.json */,
 				CA10CAFEDEADBEEF0000000E /* views */,
 				CA10CAFEDEADBEEF0000000F /* helpers */,
 				CA10CAFEDEADBEEF0000000G /* exploit */,
@@ -616,6 +619,7 @@
 					FA4E0004 /* FlappyBird@2x.png in Resources */,
 					FA4E0006 /* FlappyBird@3x.png in Resources */,
 				PATCH001 /* Assembly-CSharp-patch.bytes in Resources */,
+				LCFG001 /* localConfig.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

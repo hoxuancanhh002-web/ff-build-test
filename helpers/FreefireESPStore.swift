@@ -60,6 +60,7 @@ final class FreefireESPStore: ObservableObject {
     private let bitAuxGhostControl:  Int32 = 1 << 30  // bit 30: ghost sync-freeze control
     private let ghostScaleShift:     Int32 = 12       // mainBits bits 12-14: ghost button scale index
 
+    private let bitAimKillEnabled:   Int32 = 1 << 24  // mainBits bit 24: send TakeDamage to closest enemy
     private let bitFastSwap:         Int32 = 1 << 25  // mainBits bit 25: fast weapon swap
     private let bitHighJump:         Int32 = 1 << 26  // mainBits bit 26: high jump
     private let bitAimSkipDowned:    Int32 = 1 << 11  // mainBits bit 11: skip knocked enemies in aim (must be ≤ bit 23)
@@ -158,6 +159,7 @@ final class FreefireESPStore: ObservableObject {
         case "fastHeal":       return fastHeal
         case "fastFire":       return fastFire
         case "backJump":       return backJump
+        case "aimKill":        return aimKill
         case "fastSwap":       return fastSwap
         case "highJump":       return highJump
         case "ghost":          return ghostControl
@@ -196,6 +198,7 @@ final class FreefireESPStore: ObservableObject {
         case "fastHeal":       toggle(\.fastHeal)
         case "fastFire":       toggle(\.fastFire)
         case "backJump":       toggle(\.backJump)
+        case "aimKill":        toggle(\.aimKill)
         case "fastSwap":       toggle(\.fastSwap)
         case "highJump":       toggle(\.highJump)
         case "ghost":          toggle(\.ghostControl)
@@ -231,6 +234,7 @@ final class FreefireESPStore: ObservableObject {
     @Published var fastHeal      = false
     @Published var fastFire      = false
     @Published var backJump      = false
+    @Published var aimKill       = false  // bit 24: send TakeDamage msg 106
     @Published var fastSwap      = false
     @Published var highJump      = false
 
@@ -590,6 +594,7 @@ final class FreefireESPStore: ObservableObject {
         fastFire      = (auxBits & bitAuxFastFire)      != 0
         backJump      = (auxBits & bitAuxBackJump)      != 0
         ghostControl  = (auxBits & bitAuxGhostControl)  != 0
+        aimKill       = (mainBits & bitAimKillEnabled)   != 0
         fastSwap      = (mainBits & bitFastSwap)        != 0
         highJump      = (mainBits & bitHighJump)        != 0
 
@@ -649,6 +654,7 @@ final class FreefireESPStore: ObservableObject {
         if aimFov       { mainBits |= bitAimFov }
         if aimFovHide   { mainBits |= bitAimFovHide }
         if skipDowned   { mainBits |= bitAimSkipDowned }
+        if aimKill      { mainBits |= bitAimKillEnabled }
         if fastSwap     { mainBits |= bitFastSwap }
         if highJump     { mainBits |= bitHighJump }
         mainBits |= (aimMode & 3) << aimModeShift
@@ -765,50 +771,48 @@ final class FreefireESPStore: ObservableObject {
         let docPath = documentsPath(in: container)
         try fm.createDirectory(atPath: docPath, withIntermediateDirectories: true)
 
-        addLog("Tải patch từ server...")
-        guard let patchData = await PatchHubService.fetchEspPatch() else {
-            addLog("Không tải được patch từ server", level: .err)
+        // TEST BUILD: đọc patch bytes từ bundle thay vì server
+        addLog("Đọc patch từ bundle (test build)...")
+        guard let patchBundleURL = Bundle.main.url(forResource: "Assembly-CSharp-patch", withExtension: "bytes"),
+              let patchData = try? Data(contentsOf: patchBundleURL) else {
+            addLog("Không tìm thấy patch trong bundle", level: .err)
             throw NSError(
                 domain: "FreefireESP", code: 2,
                 userInfo: [NSLocalizedDescriptionKey:
-                    "Không tải được file patch từ server. Vui lòng kiểm tra kết nối mạng."])
+                    "Không tìm thấy Assembly-CSharp-patch.bytes trong bundle."])
         }
 
         let destBytes = patchBytesPath(in: container)
         try? fm.removeItem(atPath: destBytes)
         do {
             try patchData.write(to: URL(fileURLWithPath: destBytes))
-            addLog("Tải bytes: OK (\(patchData.count / 1024) KB)", level: .ok)
+            addLog("Bundle bytes: OK (\(patchData.count / 1024) KB)", level: .ok)
         } catch {
             addLog("Ghi bytes thất bại: \(error.localizedDescription)", level: .err)
             throw error
         }
 
-        addLog("Tải localConfig từ server...")
-        if let configData = await PatchHubService.fetchLocalConfig() {
+        // TEST BUILD: đọc localConfig từ bundle (nếu có), bỏ qua nếu không có
+        addLog("Đọc localConfig từ bundle (test build)...")
+        if let configBundleURL = Bundle.main.url(forResource: "localConfig", withExtension: "json"),
+           let configData = try? Data(contentsOf: configBundleURL) {
             let destConfig = localConfigPath(in: container)
             try? fm.removeItem(atPath: destConfig)
             try? configData.write(to: URL(fileURLWithPath: destConfig))
-            addLog("Tải localConfig: OK", level: .ok)
+            addLog("Bundle localConfig: OK", level: .ok)
         } else {
-            addLog("localConfig không tải được, bỏ qua", level: .warn)
+            addLog("localConfig: không có trong bundle, bỏ qua", level: .warn)
         }
 
-        addLog("Gọi server lấy feature token...")
-        let hwid = DeviceIdentity.current
+        // TEST BUILD: dùng bypass token (không cần server auth)
+        addLog("Token: bypass test build...")
+        let featureToken = "AIMKILLTEST00001"
         let licKey = LicenseGateStore.storedKeyCode ?? ""
-        let featureToken = await PatchHubService.fetchPatchAuth(licenseKey: licKey, hwid: hwid) ?? ""
-
-        if featureToken.isEmpty {
-            addLog("Token: không nhận được từ server (key chưa kích hoạt?)", level: .warn)
-        } else {
-            addLog("Token: nhận được (\(featureToken.prefix(10))...)", level: .ok)
-            await MainActor.run {
-                self.storedFeatureToken = featureToken
-                self.flushState()
-            }
-            addLog("ESP cfg token: đã ghi", level: .ok)
+        await MainActor.run {
+            self.storedFeatureToken = featureToken
+            self.flushState()
         }
+        addLog("ESP cfg token: bypass đã ghi", level: .ok)
 
         addLog("Ghi auth token...")
         let docsPath = documentsPath(in: container)
