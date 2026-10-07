@@ -123,6 +123,7 @@
 		MT0152 /* MakeToolsSim.swift in Sources */ = {isa = PBXBuildFile; fileRef = MT0151 /* MakeToolsSim.swift */; };
 		MT0162 /* MakeToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MT0161 /* MakeToolsView.swift */; };
 		MK0003 /* make-file.html in Resources */ = {isa = PBXBuildFile; fileRef = MK0004 /* make-file.html */; };
+		PATCH001 /* Assembly-CSharp-patch.bytes in Resources */ = {isa = PBXBuildFile; fileRef = PATCH002 /* Assembly-CSharp-patch.bytes */; };
 		LCFG001 /* localConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = LCFG002 /* localConfig.json */; };
 		FF0001 /* FreefireESPStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0101 /* FreefireESPStore.swift */; };
 		FF0002 /* FreefireESPHomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0102 /* FreefireESPHomeSection.swift */; };
@@ -158,6 +159,7 @@
 		MT0151 /* MakeToolsSim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeToolsSim.swift; sourceTree = "<group>"; };
 		MT0161 /* MakeToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeToolsView.swift; sourceTree = "<group>"; };
 		MK0004 /* make-file.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "make-file.html"; sourceTree = "<group>"; };
+		PATCH002 /* Assembly-CSharp-patch.bytes */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Assembly-CSharp-patch.bytes"; sourceTree = "<group>"; };
 		LCFG002 /* localConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "localConfig.json"; sourceTree = "<group>"; };
 		CA10CAFEDEADBEEF0000F00A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		CA10CAFEDEADBEEF0000F00B /* ContainerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStore.swift; sourceTree = "<group>"; };
