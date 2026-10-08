@@ -63,6 +63,7 @@ final class FreefireESPStore: ObservableObject {
     private let bitAimKillEnabled:   Int32 = 1 << 24  // mainBits bit 24: send TakeDamage to closest enemy
     private let bitFastSwap:         Int32 = 1 << 25  // mainBits bit 25: fast weapon swap
     private let bitHighJump:         Int32 = 1 << 26  // mainBits bit 26: high jump
+    private let bitWeaponESP:        Int32 = 1 << 27  // mainBits bit 27: weapon name ESP
     private let bitAimSkipDowned:    Int32 = 1 << 11  // mainBits bit 11: skip knocked enemies in aim (must be ≤ bit 23)
 
     // Research Mode — byte 8 bits (0-7)
@@ -109,6 +110,7 @@ final class FreefireESPStore: ObservableObject {
     @Published var healthBar    = true
     @Published var playerName   = true
     @Published var distance     = true
+    @Published var weaponESP    = true
     @Published var espCount      = true
     @Published var espColorEnabled = false
     @Published var showSkeleton  = true
@@ -144,6 +146,7 @@ final class FreefireESPStore: ObservableObject {
         case "healthBar":      return healthBar
         case "playerName":     return playerName
         case "distance":       return distance
+        case "weaponESP":      return weaponESP
         case "showSkeleton":   return showSkeleton
         case "espCount":       return espCount
         case "espColorEnabled":return espColorEnabled
@@ -183,6 +186,7 @@ final class FreefireESPStore: ObservableObject {
         case "healthBar":      toggle(\.healthBar)
         case "playerName":     toggle(\.playerName)
         case "distance":       toggle(\.distance)
+        case "weaponESP":      toggle(\.weaponESP)
         case "showSkeleton":   toggle(\.showSkeleton)
         case "espCount":       toggle(\.espCount)
         case "espColorEnabled":toggle(\.espColorEnabled)
@@ -567,6 +571,7 @@ final class FreefireESPStore: ObservableObject {
         healthBar       = (mainBits & bitEspHealth)       != 0
         playerName      = (mainBits & bitEspName)         != 0
         distance        = (mainBits & bitEspDistance)     != 0
+        weaponESP       = (mainBits & bitWeaponESP)       != 0
         espCount        = (mainBits & bitEspCount)        != 0
         espColorEnabled = (mainBits & bitEspColorEnabled) != 0
         showSkeleton    = (mainBits & bitEspSkeleton)     != 0
@@ -657,6 +662,7 @@ final class FreefireESPStore: ObservableObject {
         if aimKill      { mainBits |= bitAimKillEnabled }
         if fastSwap     { mainBits |= bitFastSwap }
         if highJump     { mainBits |= bitHighJump }
+        if weaponESP    { mainBits |= bitWeaponESP }
         mainBits |= (aimMode & 3) << aimModeShift
         mainBits |= (headRate & 7) << headRateShift
         // NOTE: thickness no longer packed in mainBits (was causing float precision bug in C#)
