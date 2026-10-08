@@ -41,6 +41,7 @@ struct CheatMenuView: View {
     @AppStorage("esp.health")   private var espHealth   = true
     @AppStorage("esp.name")     private var espName     = true
     @AppStorage("esp.distance") private var espDistance = true
+    @AppStorage("esp.weapon")   private var espWeapon   = true
 
     // ── AIM ────────────────────────────────────────────────────────
     @AppStorage("aim.silent")     private var silentAim      = false
@@ -206,6 +207,10 @@ struct CheatMenuView: View {
                 rowDivider
                 toggleRow(icon: "ruler.fill",         iconColor: Color(red: 0.35, green: 0.85, blue: 0.85),
                           title: "Distance",           subtitle: "Khoảng cách đến địch",      binding: $espDistance)
+                    .disabled(!espMaster)
+                rowDivider
+                toggleRow(icon: "gun",                iconColor: Color(red: 1.00, green: 0.85, blue: 0.10),
+                          title: "Weapon ESP",         subtitle: "Tên súng đang cầm của địch", binding: $espWeapon)
                     .disabled(!espMaster)
             }
             .background(rowBg)
