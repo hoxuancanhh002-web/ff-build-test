@@ -209,7 +209,7 @@ struct CheatMenuView: View {
                           title: "Distance",           subtitle: "Khoảng cách đến địch",      binding: $espDistance)
                     .disabled(!espMaster)
                 rowDivider
-                toggleRow(icon: "gun",                iconColor: Color(red: 1.00, green: 0.85, blue: 0.10),
+                toggleRow(icon: "bolt.fill",          iconColor: Color(red: 1.00, green: 0.85, blue: 0.10),
                           title: "Weapon ESP",         subtitle: "Tên súng đang cầm của địch", binding: $espWeapon)
                     .disabled(!espMaster)
             }
